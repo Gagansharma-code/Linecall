@@ -17,6 +17,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest==9.1.1",
+    "ruff==0.16.5",
+    "mypy==2.3.1",
+    "pytest-cov==7.1.0",
+    "pre-commit==4.6.2",
 ]
 
 [tool.setuptools.dynamic]
@@ -25,6 +29,63 @@ version = {attr = "linecall.__about__.__version__"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+# E/F: correctness (pycodestyle + pyflakes). I: import hygiene (replaces isort).
+# UP: keep syntax current for py311+. B: likely bugs. SIM: flatten needless
+# branching. N: naming consistency across the library and scripts.
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "N"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["linecall", "download_dataset"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.11"
+# Colon-separated so this is OS-independent (mypy does not use os.pathsep here).
+mypy_path = "src:scripts"
+explicit_package_bases = true
+exclude = "(?x)(^\\.venv/|^\\.pytest_cache/|^build/|^dist/|egg-info)"
+
+[[tool.mypy.overrides]]
+module = ["linecall", "linecall.*"]
+strict = true
+
+[[tool.mypy.overrides]]
+# Glue scripts and tests are allowed untyped defs; the library package is not.
+module = [
+    "scripts",
+    "scripts.*",
+    "download_dataset",
+    "tests",
+    "tests.*",
+    "test_download_dataset",
+]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["roboflow", "roboflow.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["yaml"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src", "scripts"]
+addopts = [
+    "--cov=src/linecall",
+    "--cov-report=term-missing",
+    # No --cov-fail-under: the library is still tiny; a premature floor would
+    # get gamed or block unrelated work. Revisit once there is enough code for
+    # a meaningful coverage gate.
+]

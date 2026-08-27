@@ -12,14 +12,14 @@ import yaml
 import download_dataset
 
 
-def _write_config(path: Path, **overrides: object) -> dict:
-    config = {
+def _write_config(path: Path, **overrides: str | int) -> dict[str, str | int]:
+    config: dict[str, str | int] = {
         "workspace": "viren-dhanwani",
         "project": "tennis-ball-detection",
         "version": 6,
         "format": "yolov8",
-        **overrides,
     }
+    config.update(overrides)
     path.write_text(yaml.safe_dump(config), encoding="utf-8")
     return {
         "workspace": str(config["workspace"]),
@@ -27,6 +27,11 @@ def _write_config(path: Path, **overrides: object) -> dict:
         "version": int(config["version"]),
         "format": str(config["format"]),
     }
+
+
+def _stub_roboflow_download(mock_roboflow_cls: MagicMock) -> None:
+    project = mock_roboflow_cls.return_value.workspace.return_value.project.return_value
+    project.version.return_value.download.side_effect = _fake_download
 
 
 def _fake_download(model_format: str, location: str, overwrite: bool = False) -> None:
@@ -67,13 +72,13 @@ def test_cli_missing_api_key_prints_one_line_error(
 
 
 @patch("download_dataset.Roboflow")
-def test_writes_manifest_with_expected_fields(
-    mock_roboflow_cls: MagicMock, tmp_path: Path
-) -> None:
-    mock_roboflow_cls.return_value.workspace.return_value.project.return_value.version.return_value.download.side_effect = _fake_download
+def test_writes_manifest_with_expected_fields(mock_roboflow_cls: MagicMock, tmp_path: Path) -> None:
+    _stub_roboflow_download(mock_roboflow_cls)
 
     config = _write_config(tmp_path / "dataset.yaml")
-    dest = download_dataset.destination_dir(tmp_path / "raw", config["project"], config["version"])
+    dest = download_dataset.destination_dir(
+        tmp_path / "raw", str(config["project"]), int(config["version"])
+    )
 
     result = download_dataset.download_dataset(config, dest, api_key="test-key")
 
@@ -97,10 +102,12 @@ def test_redownloads_when_manifest_format_differs(
 ) -> None:
     """A manifest matching on workspace/project/version but not format must
     not be treated as a match — the format is part of what was asked for."""
-    mock_roboflow_cls.return_value.workspace.return_value.project.return_value.version.return_value.download.side_effect = _fake_download
+    _stub_roboflow_download(mock_roboflow_cls)
 
     config = _write_config(tmp_path / "dataset.yaml")
-    dest = download_dataset.destination_dir(tmp_path / "raw", config["project"], config["version"])
+    dest = download_dataset.destination_dir(
+        tmp_path / "raw", str(config["project"]), int(config["version"])
+    )
     dest.mkdir(parents=True)
     stale_config = {**config, "format": "coco"}
     download_dataset.write_manifest(dest, stale_config)
@@ -118,7 +125,9 @@ def test_skips_download_when_matching_manifest_exists(
     mock_roboflow_cls: MagicMock, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     config = _write_config(tmp_path / "dataset.yaml")
-    dest = download_dataset.destination_dir(tmp_path / "raw", config["project"], config["version"])
+    dest = download_dataset.destination_dir(
+        tmp_path / "raw", str(config["project"]), int(config["version"])
+    )
     dest.mkdir(parents=True)
     (dest / "already_there.txt").write_text("keep me", encoding="utf-8")
     download_dataset.write_manifest(dest, config)

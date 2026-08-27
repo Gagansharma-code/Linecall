@@ -13,7 +13,7 @@ import hashlib
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -78,7 +78,7 @@ def write_manifest(dataset_dir: Path, config: dict[str, Any]) -> Path:
         "project": config["project"],
         "version": config["version"],
         "format": config["format"],
-        "downloaded_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "downloaded_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "sha256": compute_fingerprint(dataset_dir),
     }
     path = dataset_dir / "manifest.json"
@@ -94,7 +94,7 @@ def manifest_matches(dataset_dir: Path, config: dict[str, Any]) -> bool:
         recorded = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
         return False
-    return (
+    return bool(
         recorded.get("workspace") == config["workspace"]
         and recorded.get("project") == config["project"]
         and int(recorded.get("version", -1)) == config["version"]

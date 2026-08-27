@@ -29,6 +29,31 @@ The export lands in `data/raw/tennis-ball-detection-v6/` with a `manifest.json` 
 pytest
 ```
 
+## Development
+
+Install with the `dev` extra (ruff, mypy, pytest, pytest-cov, pre-commit):
+
+```bash
+pip install -e ".[dev]"
+```
+
+Quality checks — these are the same commands CI runs:
+
+```bash
+ruff check .
+ruff format --check .
+mypy .
+pytest
+```
+
+To apply formatting locally, run `ruff format .`.
+
+To opt into git hooks (not installed automatically):
+
+```bash
+pre-commit install
+```
+
 ## What this repo does not do yet
 
 There is no model training, no inference, no camera or Raspberry Pi capture code, and no networking or payment logic. Those are separate tickets. Do not treat this scaffold as a finished detection pipeline.
