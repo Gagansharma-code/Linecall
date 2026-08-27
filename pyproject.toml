@@ -12,6 +12,8 @@ dependencies = [
     "roboflow==1.4.1",
     "pyyaml==6.0.3",
     "python-dotenv==1.2.3",
+    "numpy==2.3.5",
+    "opencv-python-headless==5.0.0.93",
 ]
 
 [project.optional-dependencies]
@@ -41,7 +43,7 @@ src = ["src", "scripts", "tests"]
 select = ["E", "F", "I", "UP", "B", "SIM", "N"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["linecall", "download_dataset"]
+known-first-party = ["linecall", "download_dataset", "extract_amateur_frames"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -65,6 +67,7 @@ module = [
     "scripts",
     "scripts.*",
     "download_dataset",
+    "extract_amateur_frames",
     "tests",
     "tests.*",
     "test_download_dataset",
@@ -77,6 +80,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["yaml"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["cv2"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
