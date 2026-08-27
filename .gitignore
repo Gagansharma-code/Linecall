@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Secrets — never commit a real key
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# Tests / tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Dataset contents stay local; keep the directory itself
+data/*
+!data/.gitkeep
+
+# Future training output (dirs created by later tickets)
+runs/
+models/
+
+# OS
+.DS_Store
+Thumbs.db

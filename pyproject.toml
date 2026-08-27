@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linecall"
+dynamic = ["version"]
+description = "Production tennis ball detection for automated line calling."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "roboflow==1.4.1",
+    "pyyaml==6.0.3",
+    "python-dotenv==1.2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "linecall.__about__.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "scripts"]

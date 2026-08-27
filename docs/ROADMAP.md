@@ -1,0 +1,34 @@
+# Roadmap
+
+Each ticket is written as a standalone Cursor prompt (senior-eng-writes-spec / junior-eng-executes workflow) and reviewed before the next one is issued. See `DECISIONS.md` for what's settled vs. still open at each phase boundary.
+
+## Phase A — Detection model + validation harness (current)
+No camera/hardware, no networking, no payment code. Goal: prove a nano YOLO model exported to NCNN can find the ball reliably, on recorded footage, before spending on hardware.
+
+- [ ] **A1** — repo scaffold, environment, dataset acquisition
+- [ ] **A2** — testing, linting, type-checking, and CI infrastructure
+- [ ] **A3** — YOLOv8n fine-tuning pipeline + run manifest
+- [ ] **A4** — NCNN export + parity check against the PyTorch model
+- [ ] **A5** — Rerun-backed replay harness
+- [ ] **A6** — benchmark harness + report against reference clips
+- [ ] **A7** — active-learning flagging stub for low-confidence detections
+
+Every ticket from A2 onward is expected to come with unit tests and pass lint/type-check/CI before it's considered done — A2 is what makes that enforceable instead of aspirational.
+
+## Phase B — Single camera, live, real-time
+Needs: 1× Raspberry Pi 5 + 1× IMX296 Global Shutter camera.
+`picamera2` capture → Kalman/optical-flow tracker every frame, YOLO keyframe detector every 8–10th frame on a cropped search window. Exit: stable x/y/t stream at full frame rate on the actual Pi 5, not a laptop.
+
+## Phase C — Two cameras + geometry
+Needs: second Pi 5 + camera rig, and the **camera placement decision** from `DECISIONS.md` resolved first.
+UDP coordinate link + clock-offset handshake, automatic court-line calibration, `cv2.triangulatePoints` + `scipy.optimize.curve_fit` trajectory fit. Exit: a 3D bounce point from two synchronized 2D streams, with a measured sync error.
+
+## Phase D — The call itself
+Point-in-polygon test against calibrated geometry, tolerance margin sized from measured (not guessed) sync error, SQLite logging, confidence score, "close call" fallback, LED/tone output. Exit: a full point, end to end, produces a stored, explainable call.
+
+## Phase E — Field validation
+Outdoor testing against chalk-marked or independently-filmed ground truth, error measured in centimeters. This number — not a guess — sets the production tolerance margin. **Nothing in Phase F starts until this passes.**
+
+## Phase F — Business/payment layer
+Needs: the **business model decision** from `DECISIONS.md` resolved first.
+Manual start/stop switch → Stripe Payment Link (tested solo, no hardware) → webhook-to-MQTT bridge → fleet heartbeat/status dashboard once there's more than one court.

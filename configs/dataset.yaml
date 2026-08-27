@@ -1,0 +1,7 @@
+# Pinned public tennis-ball detection dataset on Roboflow Universe.
+# https://universe.roboflow.com/viren-dhanwani/tennis-ball-detection
+# Version 6 is the latest published version of this project.
+workspace: viren-dhanwani
+project: tennis-ball-detection
+version: 6
+format: yolov8
