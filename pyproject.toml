@@ -19,6 +19,7 @@ dependencies = [
     # albucore (via albumentations 2.0.8) accepts stringzilla>=3.10.4; 5.1.2 is
     # sdist-only on Windows/cp311 and fails to compile. 5.1.1 has a wheel.
     "stringzilla==5.1.1",
+    "ncnn==1.0.20260526",
 ]
 
 [project.optional-dependencies]
@@ -54,6 +55,8 @@ known-first-party = [
     "extract_amateur_frames",
     "merge_datasets",
     "train",
+    "export_ncnn",
+    "check_ncnn_parity",
 ]
 
 [tool.ruff.format]
@@ -66,7 +69,7 @@ python_version = "3.11"
 # Colon-separated so this is OS-independent (mypy does not use os.pathsep here).
 mypy_path = "src:scripts"
 explicit_package_bases = true
-exclude = "(?x)(^\\.venv/|^\\.pytest_cache/|^build/|^dist/|egg-info)"
+exclude = "(?x)(^\\.venv/|^\\.pytest_cache/|^build/|^dist/|egg-info|^runs/|^data/)"
 
 [[tool.mypy.overrides]]
 module = ["linecall", "linecall.*"]
@@ -81,10 +84,13 @@ module = [
     "extract_amateur_frames",
     "merge_datasets",
     "train",
+    "export_ncnn",
+    "check_ncnn_parity",
     "tests",
     "tests.*",
     "test_download_dataset",
     "test_merge_datasets",
+    "test_check_ncnn_parity",
 ]
 disallow_untyped_defs = false
 
@@ -101,7 +107,7 @@ module = ["cv2"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["ultralytics", "ultralytics.*", "albumentations", "albumentations.*"]
+module = ["ultralytics", "ultralytics.*", "albumentations", "albumentations.*", "ncnn"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

@@ -42,6 +42,14 @@ models/
 *.pth
 *.onnx
 
+# PNNX / NCNN tooling Ultralytics may drop in the repo root on first export
+pnnx
+pnnx.exe
+debug.bin
+debug.param
+debug2.bin
+debug2.param
+
 # OS
 .DS_Store
 Thumbs.db
