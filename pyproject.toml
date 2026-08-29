@@ -14,6 +14,11 @@ dependencies = [
     "python-dotenv==1.2.3",
     "numpy==2.3.5",
     "opencv-python-headless==5.0.0.93",
+    "ultralytics==8.4.133",
+    "albumentations==2.0.8",
+    # albucore (via albumentations 2.0.8) accepts stringzilla>=3.10.4; 5.1.2 is
+    # sdist-only on Windows/cp311 and fails to compile. 5.1.1 has a wheel.
+    "stringzilla==5.1.1",
 ]
 
 [project.optional-dependencies]
@@ -43,7 +48,13 @@ src = ["src", "scripts", "tests"]
 select = ["E", "F", "I", "UP", "B", "SIM", "N"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["linecall", "download_dataset", "extract_amateur_frames"]
+known-first-party = [
+    "linecall",
+    "download_dataset",
+    "extract_amateur_frames",
+    "merge_datasets",
+    "train",
+]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -68,9 +79,12 @@ module = [
     "scripts.*",
     "download_dataset",
     "extract_amateur_frames",
+    "merge_datasets",
+    "train",
     "tests",
     "tests.*",
     "test_download_dataset",
+    "test_merge_datasets",
 ]
 disallow_untyped_defs = false
 
@@ -84,6 +98,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["cv2"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["ultralytics", "ultralytics.*", "albumentations", "albumentations.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

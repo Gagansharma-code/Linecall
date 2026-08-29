@@ -5,10 +5,10 @@ Each ticket is written as a standalone Cursor prompt (senior-eng-writes-spec / j
 ## Phase A — Detection model + validation harness (current)
 No camera/hardware, no networking, no payment code. Goal: prove a nano YOLO model exported to NCNN can find the ball reliably, on recorded footage, before spending on hardware.
 
-- [ ] **A1** — repo scaffold, environment, dataset acquisition
-- [ ] **A2** — testing, linting, type-checking, and CI infrastructure
-- [ ] **A3** — collect + ingest real amateur public-court footage (see below — blocks A4's validity, not its construction)
-- [ ] **A4** — YOLOv8n fine-tuning pipeline + run manifest (trains on seed + amateur data, with lighting/shadow/blur augmentation)
+- [x] **A1** — repo scaffold, environment, dataset acquisition
+- [x] **A2** — testing, linting, type-checking, and CI infrastructure
+- [x] **A3** — collect + ingest real amateur public-court footage (extraction done: 5 clips, ~63 min, 3 venues/lighting conditions → 1000 candidate frames at `C:\linecall-data\candidate_frames`; annotated via Roboflow, class `tennis ball`. Final: 298 approved / 194 rejected / 507 unannotated — accepted with known residual noise rather than exhaustively re-verified, see `DECISIONS.md`'s auto-labeling finding. Good enough to unblock A4; A7 is the real quality check.)
+- [x] **A4** — YOLOv8n fine-tuning pipeline + run manifest. Verified end-to-end on this machine (CPU only, no CUDA): merged 877 images (578 broadcast + 299 amateur), fine-tuned YOLOv8n with a custom Albumentations pipeline (RandomShadow/RandomBrightnessContrast/MotionBlur) confirmed active via Ultralytics' own pipeline log, not just echoed config. A full 30-epoch run measured at ~2 hours on this CPU — too long for a pipeline-validation run, so the verification run used 8 epochs (27 min): precision 0.591, recall 0.458, mAP50 0.481, mAP50-95 0.163. **These numbers are not a real accuracy result** — 8 epochs proves the pipeline works, it does not represent a trained model. A real training run (30+ epochs, likely needing GPU access given the CPU pace) is still needed before A7's benchmark means anything.
 - [ ] **A5** — NCNN export + parity check against the PyTorch model
 - [ ] **A6** — Rerun-backed replay harness
 - [ ] **A7** — benchmark harness + report, broken out by data source (broadcast vs. amateur), not one blended number
@@ -16,7 +16,7 @@ No camera/hardware, no networking, no payment code. Goal: prove a nano YOLO mode
 
 Every ticket from A2 onward is expected to come with unit tests and pass lint/type-check/CI before it's considered done — A2 is what makes that enforceable instead of aspirational.
 
-**A3 is a physical-world task, not a Cursor ticket:** the only seed data pulled so far (`viren-dhanwani/tennis-ball-detection`, A1) was verified by direct inspection to be 100% professional broadcast footage — perfect stadium lighting, pristine lines, elevated wide camera angle — across every filename group in it, not a mix. It's fine for validating that the training/export/harness pipeline works mechanically, but a model trained on it alone has no evidence it generalizes to a public court's harsh sun, dim evening light, or worn markings. A4 can still be built and run against the seed set to prove the pipeline works, but **Phase A isn't considered done, and nothing should move to Phase B, until real amateur-court footage has been folded into training and A7 shows it's actually being detected well** — not just the broadcast set. Action: record a few minutes of real play at a public court on a phone (doesn't need the final Pi/camera rig) — ideally one clip in harsh midday sun, one overcast or evening, and a court with normal wear rather than fresh paint.
+**A3's original concern (broadcast-only seed data) is now addressed:** real amateur public-court footage exists, annotated, and ready to fold into training. **Phase A still isn't fully done, and nothing moves to Phase B, until A7 actually shows the model detecting well on the amateur/held-out set** — not just the broadcast one. That's now purely a training + measurement question (A4–A7), not a data-collection one.
 
 ## Phase B — Single camera, live, real-time
 Needs: 1× Raspberry Pi 5 + 1× IMX296 Global Shutter camera.

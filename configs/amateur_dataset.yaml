@@ -1,0 +1,6 @@
+# Pinned amateur public-court tennis-ball dataset on Roboflow.
+# workspace gagans-workspace-bpfjp / project linecall / version 1
+workspace: gagans-workspace-bpfjp
+project: linecall
+version: 1
+format: yolov8

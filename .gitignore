@@ -36,6 +36,12 @@ data/*
 runs/
 models/
 
+# Pretrained/fine-tuned model checkpoints — never commit weights, whatever
+# directory they land in (Ultralytics downloads base checkpoints to the CWD)
+*.pt
+*.pth
+*.onnx
+
 # OS
 .DS_Store
 Thumbs.db
