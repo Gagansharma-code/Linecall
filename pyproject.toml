@@ -20,6 +20,7 @@ dependencies = [
     # sdist-only on Windows/cp311 and fails to compile. 5.1.1 has a wheel.
     "stringzilla==5.1.1",
     "ncnn==1.0.20260526",
+    "rerun-sdk==0.36.3",
 ]
 
 [project.optional-dependencies]
@@ -57,6 +58,7 @@ known-first-party = [
     "train",
     "export_ncnn",
     "check_ncnn_parity",
+    "replay_harness",
 ]
 
 [tool.ruff.format]
@@ -86,11 +88,13 @@ module = [
     "train",
     "export_ncnn",
     "check_ncnn_parity",
+    "replay_harness",
     "tests",
     "tests.*",
     "test_download_dataset",
     "test_merge_datasets",
     "test_check_ncnn_parity",
+    "test_replay_harness",
 ]
 disallow_untyped_defs = false
 
@@ -107,7 +111,15 @@ module = ["cv2"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["ultralytics", "ultralytics.*", "albumentations", "albumentations.*", "ncnn"]
+module = [
+    "ultralytics",
+    "ultralytics.*",
+    "albumentations",
+    "albumentations.*",
+    "ncnn",
+    "rerun",
+    "rerun.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

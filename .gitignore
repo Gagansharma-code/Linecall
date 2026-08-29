@@ -35,6 +35,7 @@ data/*
 # Future training output (dirs created by later tickets)
 runs/
 models/
+replays/
 
 # Pretrained/fine-tuned model checkpoints — never commit weights, whatever
 # directory they land in (Ultralytics downloads base checkpoints to the CWD)
