@@ -59,6 +59,7 @@ known-first-party = [
     "export_ncnn",
     "check_ncnn_parity",
     "replay_harness",
+    "benchmark",
 ]
 
 [tool.ruff.format]
@@ -89,12 +90,14 @@ module = [
     "export_ncnn",
     "check_ncnn_parity",
     "replay_harness",
+    "benchmark",
     "tests",
     "tests.*",
     "test_download_dataset",
     "test_merge_datasets",
     "test_check_ncnn_parity",
     "test_replay_harness",
+    "test_benchmark",
 ]
 disallow_untyped_defs = false
 
